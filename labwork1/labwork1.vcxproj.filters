@@ -18,5 +18,28 @@
     <ClCompile Include="labwork1.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="..\source\interface.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\source\mongoose.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\source\sim_server.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="warehouse.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="warehouse_jni.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <Library Include="..\lib\NIDAQmx.lib" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="warehouse.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

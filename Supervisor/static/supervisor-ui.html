@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Page Title</title>
+
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js" integrity="sha512-bLT0Qm9VnAYZDflyKcBaQ2gg0hSYNQrJ8RilYldYQ1FxQYoCLtUjuuRuZo+fjqhx/qtq/1itJ0C2ejDxltZVFg==" crossorigin="anonymous"></script>        
+        <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js" integrity="sha384-9/reFTGAW83EW2RDu2S0VKaIzap3H66lZH81PoYlFhbGU+6BZp6G7niu735Sk7lN" crossorigin="anonymous"></script>
+
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z" crossorigin="anonymous">
+        <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js" integrity="sha384-B4gt1jrGC7Jh4AgTPSdUtOBvfO8shuf57BaghqFfPlYxofvL8/KUEfYiJOMMV+rV" crossorigin="anonymous"></script>
+
+        <script>
+            function ajax_get_request(remote_address, arguments, done_callback = null, fail_callback = null, always_callbak = null)
+            {
+                $.get(remote_address, arguments, function (results) {
+                    if (done_callback !== null) {
+                        done_callback(results);
+                        //the_modal_dialog.style.display = "none";
+                    }
+                }).fail(function () {
+
+                    alert("error");
+                }).always(function () {
+                    //alert("finished");
+                });
+            }
+
+            function getCurrentLine(text__area) {
+                textarea = "#" + text__area;
+                pos = document.getElementById(text__area).selectionStart;//$(textarea).getSelection().start; // fieldselection jQuery plugin
+                taval = $(textarea).val();
+                start = taval.lastIndexOf('\n', pos - 1) + 1;
+                end = taval.indexOf('\n', pos);
+
+                if (end == -1) {
+                    end = taval.length;
+                }
+
+                return taval.substr(start, end - start);
+            }
+
+            $(document).ready(function () {
+                $("#x-left").click(function () {
+                    ajax_get_request("/x-move-left", {"cmd": "x-move-left"});
+                });
+                $("#x-right").click(function () {
+                    ajax_get_request("/x-move-right", {"cmd": "x-move-right"});
+                });
+                $("#x-stop").click(function () {
+                    ajax_get_request("/x-stop", {"cmd": "x-move-stop"});
+                });
+
+            });
+
+
+            $("#prologTextArea2").keypress(function (event) {
+                console.log("char=" + event.which);
+                if (event.which == 13) {
+                    //code here
+                    //13 represents Enter key
+                    var current_line = getCurrentLine(this);
+                    console.log("line=" + current_line);
+                }
+            });
+
+
+            function process(e) {
+                var code = (e.keyCode ? e.keyCode : e.which);
+                if (code == 13) { //Enter keycode
+                    var current_line = getCurrentLine("prologTextArea");
+                    ajax_get_request("/execute_remote_query", {"query": current_line}, done_executed_query);
+
+
+
+                    console.log("line=" + current_line);
+                }
+            }
+
+
+            function done_executed_query(result) {
+                //console.log("result=" + result);
+                /*
+                 var pos = document.getElementById("prologTextArea").selectionStart;
+                 
+                 var cursorPos = $('#prologTextArea').prop('selectionStart');
+                 var v = $('#prologTextArea').val();
+                 var textBefore = v.substring(0, cursorPos);
+                 var textAfter = v.substring(cursorPos, v.length);
+                 
+                 $('#prologTextArea').val(textBefore + result + textAfter);
+                 
+                 $('#prologTextArea').prop('selectionEnd', cursorPos + result.length);
+                 */
+                $('#prologTextAnswers').val(result.trim());
+
+            }
+  
+
+        </script>
+        <style>
+            iframe{
+                height: 50%;
+                width: 50%;
+            }
+        </style>
+
+
+
+    </head>
+    <body>
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-sm-12">
+                    <div class="alert alert-success" role="alert">
+                        <h1>Inteligent Supervision Remote User Interface</h1>
+                    </div>
+                </div>
+            </div>            
+            <div class="row">
+                <div class="col-sm-4">                    
+                    <div class="row">
+                        <div class="col-sm-12">
+                            <table class="table table-sm">                               
+                                <tbody>
+                                    <tr>                                        
+                                        <td><button id="x-left"  type="button" class="btn btn-primary">x-Left</button></td>
+                                        <td><button id="x-right" type="button" class="btn btn-success">x-Right</button></td>
+                                        <td><button id="x-stop" type="button" class="btn btn-warning">x-Stop</button></td>
+                                    </tr>
+                                    <tr>                                        
+                                        <td><button type="button" class="btn btn-primary">y-Inside</button></td>
+                                        <td><button type="button" class="btn btn-success">y-Outside</button></td>
+                                        <td><button type="button" class="btn btn-warning">y-Stop</button></td>
+                                    </tr>
+                                    <tr>                                        
+                                        <td><button type="button" class="btn btn-primary">z-Up</button></td>
+                                        <td><button type="button" class="btn btn-success">z-Down</button></td>
+                                        <td><button type="button" class="btn btn-warning">z-Stop</button></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-12">
+                            <div class="row">
+                                <div class="col-sm-12">
+                                    <label for="prologTextArea">kb-Query</label>
+                                    <textarea class="form-control" id="prologTextArea" rows="6" onkeypress="process(event, this)"></textarea>
+                                </div>
+                            </div>    
+                            <div class="row">
+                                <div class="col-sm-12">
+                                    <label for="prologTextAnswers">Answers</label>
+                                    <textarea class="form-control" id="prologTextAnswers" rows="12"></textarea>
+                                </div>
+                            </div>
+                        </div>                    
+                    </div>
+                </div>
+                <div class="col-sm-8">
+                    <div class="row">
+                        <div class="col-sm-12">
+                            <div class="embed-responsive embed-responsive-16by9">
+                                <iframe src="http://localhost:8081/ss_multi_parts.html" title="Simulator"></iframe>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+    </body>
+</html>

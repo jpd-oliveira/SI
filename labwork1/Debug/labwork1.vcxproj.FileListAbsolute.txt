@@ -1,0 +1,2 @@
+C:\SI\labwork1\Debug\labwork1.exe
+C:\SI\labwork1\Debug\labwork1.pdb
