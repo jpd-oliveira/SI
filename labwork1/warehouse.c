@@ -23,11 +23,6 @@ void initializeHardwarePorts()
 }
 
 
-bool x_moving = false;
-bool y_moving = false;
-bool z_moving = false;
-bool left_station_moving = false;
-bool right_station_moving = false;
 
 void setBitValue(uInt8* variable, int n_bit, int new_value_bit)
 // given a byte value, set the n bit to value
@@ -68,7 +63,7 @@ void moveXRight()
 	setBitValue(&p, 1, 0);
 	setBitValue(&p, 0, 1);
 	writeDigitalU8(4, p);
-	x_moving = true;
+	
 }
 
 void moveXLeft() {
@@ -77,7 +72,7 @@ void moveXLeft() {
 	setBitValue(&p, 1, 1);
 	setBitValue(&p, 0, 0);
 	writeDigitalU8(4, p);
-	x_moving = true;
+	
 
 
 }
@@ -88,20 +83,21 @@ void stopX() {
 	setBitValue(&p, 1, 0);
 	setBitValue(&p, 0, 0);
 	writeDigitalU8(4, p);
-	x_moving = false;
+	
 }
 
 int getXMoving() {
 
-	if (x_moving) {
+	uInt8 p = readDigitalU8(4);
+
+	if (getBitValue(p, 0)==1) {
 		return 1;
 	}
-	else if (!x_moving) {
+	else if (getBitValue(p, 0)==0 && getBitValue(p, 1)==0) {
 		return 0;
 	}
-	else {
+	else if(getBitValue(p, 1)==1){
 		return -1;
-
 	}
 
 }
@@ -147,7 +143,7 @@ void moveZUp() {
 	setBitValue(&p, 5, 1);
 	setBitValue(&p, 6, 0);
 	writeDigitalU8(4, p);
-	bool z_moving = true;
+	
 }
 
 void moveZDown() {
@@ -156,7 +152,7 @@ void moveZDown() {
 	setBitValue(&p, 5, 0);
 	setBitValue(&p, 6, 1);
 	writeDigitalU8(4, p);
-	bool z_moving = true;
+	
 
 }
 
@@ -166,19 +162,23 @@ void stopZ() {
 	setBitValue(&p, 5, 0);
 	setBitValue(&p, 6, 0);
 	writeDigitalU8(4, p);
-	bool z_moving = false;
+	
 
 }
 
 int getZMoving() {
 
-	if (z_moving) {
+	uInt8 p = readDigitalU8(4);
+
+	if (getBitValue(p, 5) == 1) {
 		return 1;
 	}
-	else if (!z_moving) {
+	else if (getBitValue(p, 5) == 0 && getBitValue(p, 6) == 0) {
 		return 0;
 	}
-	return (-1);
+	else if (getBitValue(p, 6) == 1) {
+		return -1;
+	}
 }
 
 bool isAtZUp() {
@@ -228,7 +228,7 @@ void moveYInside() {
 	setBitValue(&p, 4, 1);
 	setBitValue(&p, 3, 0);
 	writeDigitalU8(4, p);
-	y_moving = true;
+	
 
 }
 
@@ -238,7 +238,7 @@ void moveYOutside() {
 	setBitValue(&p, 4, 0);
 	setBitValue(&p, 3, 1);
 	writeDigitalU8(4, p);
-	y_moving = true;
+	
 
 }
 
@@ -248,18 +248,22 @@ void stopY() {
 	setBitValue(&p, 4, 0);
 	setBitValue(&p, 3, 0);
 	writeDigitalU8(4, p);
-	y_moving = false;
+	
 }
 
 int getYMoving() {
 
-	if (y_moving) {
+	uInt8 p = readDigitalU8(4);
+
+	if (getBitValue(p, 4) == 1) {
 		return 1;
 	}
-	else if (!y_moving) {
+	else if (getBitValue(p, 3) == 0 && getBitValue(p, 4) == 0) {
 		return 0;
 	}
-	return (-1);
+	else if (getBitValue(p, 3) == 1) {
+		return -1;
+	}
 
 }
 
@@ -273,7 +277,7 @@ void moveLeftStationInside() {
 	setBitValue(&p2, 0, 0);
 	writeDigitalU8(4, p);
 	writeDigitalU8(5, p2);
-	left_station_moving = true;
+	
 }
 
 void moveLeftStationOutside(){
@@ -284,7 +288,7 @@ void moveLeftStationOutside(){
 	setBitValue(&p2, 0, 1);
 	writeDigitalU8(4, p);
 	writeDigitalU8(5, p2);
-	left_station_moving = true;
+	
 }
 
 void stopLeftStation() {
@@ -295,19 +299,24 @@ void stopLeftStation() {
 	setBitValue(&p2, 0, 0);
 	writeDigitalU8(4, p);
 	writeDigitalU8(5, p2);
-	left_station_moving = false;
+	
 
 }
 
 int getLeftStationMoving() {
 
-	if (left_station_moving) {
+	uInt8 p4 = readDigitalU8(4);
+	uInt8 p5 = readDigitalU8(4);
+
+	if (getBitValue(p4, 7) == 1) {
 		return 1;
 	}
-	else if (!left_station_moving) {
+	else if (getBitValue(p5, 0) == 0 && getBitValue(p4, 7) == 0) {
 		return 0;
 	}
-	return (-1);
+	else if (getBitValue(p5, 0) == 1) {
+		return -1;
+	}
 
 }
 
@@ -331,7 +340,7 @@ moveRightStationInside() {
 	setBitValue(&p, 1, 1);
 	setBitValue(&p, 2, 0);
 	writeDigitalU8(5, p);
-	right_station_moving = true;
+	
 
 }
 
@@ -341,7 +350,7 @@ moveRightStationOutside(){
 	setBitValue(&p, 1, 0);
 	setBitValue(&p, 2, 1);
 	writeDigitalU8(5, p);
-	right_station_moving = true;
+	
 
 }
 
@@ -351,19 +360,23 @@ stopRightStation() {
 	setBitValue(&p, 1, 0);
 	setBitValue(&p, 2, 0);
 	writeDigitalU8(5, p);
-	right_station_moving = false;
+	
 
 }
 
 int getRightStationMoving() {
 
-	if (right_station_moving) {
+	uInt8 p = readDigitalU8(4);
+
+	if (getBitValue(p, 1) == 1) {
 		return 1;
 	}
-	else if (!right_station_moving) {
+	else if (getBitValue(p, 1) == 0 && getBitValue(p, 2) == 0) {
 		return 0;
 	}
-	return (-1);
+	else if (getBitValue(p, 2) == 1) {
+		return -1;
+	}
 
 }
 
