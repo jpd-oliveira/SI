@@ -19,9 +19,8 @@ public class InteligentSupervisor extends Thread {
 
     private boolean interrupted = false;
 
-    public InteligentSupervisor() {
-        this.warehouse = new Warehouse();
-        this.warehouse.initilizeHardwarePorts();
+    public InteligentSupervisor(Warehouse warehouse) {
+        this.warehouse = warehouse;
     }
 
     public void setInterrupted(boolean value) {

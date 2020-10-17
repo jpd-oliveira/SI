@@ -21,11 +21,17 @@ public class App extends Application {
 
     @Override
     public void start(Stage primaryStage) {
-     
+                    
+
+        
         Warehouse warehouse = new Warehouse();
-        warehouse.initilizeHardwarePorts();
-                
-        InteligentSupervisor supervisor = new     InteligentSupervisor();
+        new Thread() {
+            public void run() {               
+                warehouse.initilizeHardwarePorts();
+            }
+        }.start();
+
+        final InteligentSupervisor supervisor  = new InteligentSupervisor(warehouse);
         supervisor.startWebServer();
 
         
