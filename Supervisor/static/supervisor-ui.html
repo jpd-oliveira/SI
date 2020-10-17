@@ -49,6 +49,26 @@
                 $("#x-stop").click(function () {
                     ajax_get_request("/x-stop", {"cmd": "x-move-stop"});
                 });
+                
+                $("#y-inside").click(function () {
+                    ajax_get_request("/y-move-inside", {"cmd": "y-move-inside"});
+                });
+                $("#y-outside").click(function () {
+                    ajax_get_request("/y-move-outside", {"cmd": "x-move-outside"});
+                });
+                $("#y-stop").click(function () {
+                    ajax_get_request("/y-stop", {"cmd": "y-move-stop"});
+                });
+                
+                $("#z-up").click(function () {
+                    ajax_get_request("/z-move-up", {"cmd": "z-move-up"});
+                });
+                $("#z-down").click(function () {
+                    ajax_get_request("/z-move-down", {"cmd": "z-move-down"});
+                });
+                $("#z-stop").click(function () {
+                    ajax_get_request("/z-stop", {"cmd": "z-move-stop"});
+                });
 
             });
 
@@ -102,6 +122,12 @@
                 height: 50%;
                 width: 50%;
             }
+            div{
+                border-width:1px;
+                border-style: ridge;
+                border-color:darkgree;
+                
+            }
         </style>
 
 
@@ -128,14 +154,14 @@
                                         <td><button id="x-stop" type="button" class="btn btn-warning">x-Stop</button></td>
                                     </tr>
                                     <tr>                                        
-                                        <td><button type="button" class="btn btn-primary">y-Inside</button></td>
-                                        <td><button type="button" class="btn btn-success">y-Outside</button></td>
-                                        <td><button type="button" class="btn btn-warning">y-Stop</button></td>
+                                        <td><button id="y-inside"  type="button" class="btn btn-primary">y-Inside</button></td>
+                                        <td><button id="y-outside"  type="button" class="btn btn-success">y-Outside</button></td>
+                                        <td><button id="y-stop"  type="button" class="btn btn-warning">y-Stop</button></td>
                                     </tr>
                                     <tr>                                        
-                                        <td><button type="button" class="btn btn-primary">z-Up</button></td>
-                                        <td><button type="button" class="btn btn-success">z-Down</button></td>
-                                        <td><button type="button" class="btn btn-warning">z-Stop</button></td>
+                                        <td><button id="z-up" type="button" class="btn btn-primary">z-Up</button></td>
+                                        <td><button id="z-down" type="button" class="btn btn-success">z-Down</button></td>
+                                        <td><button id="z-stop" type="button" class="btn btn-warning">z-Stop</button></td>
                                     </tr>
                                 </tbody>
                             </table>

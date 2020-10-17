@@ -38,6 +38,9 @@ public class App extends Application {
         Button buttonYInside = new Button ("y-inside");
         Button buttonYOutside = new Button ("y-outside");
         Button buttonYStop = new Button ("y-stop");
+        Button buttonZUp = new Button("z-up");
+        Button buttonZDown = new Button("z-down");
+        Button buttonZStop = new Button("z-stop");
         Button buttonLaunchProlog = new Button("Launch Prolog");
         Button buttonSuperbvisionUI = new Button("Launch SI-UI");
 
@@ -46,6 +49,46 @@ public class App extends Application {
         buttonXRight.setOnAction (event -> {
             warehouse.moveXRight();
             System.out.println("x moving right");
+        });
+        
+        buttonXLeft.setOnAction (event -> {
+            warehouse.moveXLeft();
+            System.out.println("x moving left");
+        });
+        
+        buttonXStop.setOnAction (event -> {
+            warehouse.stopX();
+            System.out.println("x stoped");
+        });
+        
+         buttonYInside.setOnAction (event -> {
+            warehouse.moveYInside();
+            System.out.println("y moving inside");
+        });
+        
+        buttonYOutside.setOnAction (event -> {
+            warehouse.moveYoutside();
+            System.out.println("y outside");
+        });
+        
+        buttonYStop.setOnAction (event -> {
+            warehouse.stopY();
+            System.out.println("x stoped");
+        });
+        
+         buttonZUp.setOnAction (event -> {
+            warehouse.moveZUp();
+            System.out.println("x moving right");
+        });
+        
+        buttonZDown.setOnAction (event -> {
+            warehouse.moveZDown();
+            System.out.println("x moving left");
+        });
+        
+        buttonZStop.setOnAction (event -> {
+            warehouse.stopZ();
+            System.out.println("x stoped");
         });
         
         buttonLaunchProlog.setOnAction(event->{
@@ -61,9 +104,7 @@ public class App extends Application {
             try {
                
                 java.awt.Desktop.getDesktop().browse(new URI("http://localhost:8082/supervisor-ui.html"));
-            } catch (IOException ex) {
-                Logger.getLogger(App.class.getName()).log(Level.SEVERE, null, ex);
-            } catch (URISyntaxException ex) {
+            } catch (IOException | URISyntaxException ex) {
                 Logger.getLogger(App.class.getName()).log(Level.SEVERE, null, ex);
             }                
         });
@@ -77,8 +118,11 @@ public class App extends Application {
         root.add(buttonYInside,1,2);
         root.add(buttonYOutside,2,2);
         root.add(buttonYStop,3,2);
-        root.add(buttonLaunchProlog, 1, 3);
-        root.add(buttonSuperbvisionUI, 2, 3);
+        root.add(buttonZUp,1,3);
+        root.add(buttonZDown,2,3);
+        root.add(buttonZStop,3,3);
+        root.add(buttonLaunchProlog, 1, 4);
+        root.add(buttonSuperbvisionUI, 2, 4);
         root.setHgap(10);
         root.setVgap(10);
         Scene scene = new Scene (root, 300, 250);

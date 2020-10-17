@@ -6,6 +6,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
 import org.rapidoid.http.HTTP;
+import org.rapidoid.setup.My;
 import org.rapidoid.setup.On;
 
 /*
@@ -25,19 +26,24 @@ public class InteligentSupervisor extends Thread {
 
     public void setInterrupted(boolean value) {
         this.interrupted = value;
+        
     }
     
     public void run() {
         while (!interrupted) {
             Thread.yield();
         }
-     
-        // REMAINING CODE HEHE (next slides)
-        
+         
     }
 public void startWebServer() {
         On.port(8082);        
         On.get("/").html((req, resp) -> "Inteligent supervision server");
+        
+        My.errorHandler((req, resp, error) ->{
+        
+            return resp.code(200).result("Error: " + error.getMessage());
+                
+        });
         
         On.get("/x-move-right").serve(req -> {
             warehouse.moveXRight();
@@ -56,6 +62,44 @@ public void startWebServer() {
             req.response().plain("OK");
             return req;
         });
+        
+        On.get("/y-move-inside").serve(req -> {
+            warehouse.moveYInside();
+            req.response().plain("OK");
+            return req;
+        });
+
+        On.get("/y-move-outside").serve(req -> {
+            warehouse.moveYoutside();
+            req.response().plain("OK");
+            return req;
+        });
+
+        On.get("/y-stop").serve(req -> {
+            warehouse.stopY();
+            req.response().plain("OK");
+            return req;
+        });
+        
+        On.get("/z-move-up").serve(req -> {
+            warehouse.moveZUp();
+            req.response().plain("OK");
+            return req;
+        });
+
+        On.get("/z-move-down").serve(req -> {
+            warehouse.moveZDown();
+            req.response().plain("OK");
+            return req;
+        });
+
+        On.get("/z-stop").serve(req -> {
+            warehouse.stopZ();
+            req.response().plain("OK");
+            return req;
+        });
+        
+        
         
         On.get("/execute_remote_query").serve(req -> {            
             String the_query = URLEncoder.encode(req.param("query"), StandardCharsets.UTF_8);
