@@ -32,15 +32,27 @@ public class App extends Application {
         Button buttonXRight = new Button("x-right");
         Button buttonXLeft = new Button("x-left");
         Button buttonXStop = new Button("x-stop");
+        
         buttonXRight.setMaxSize(Double.MAX_VALUE, Double.MAX_VALUE);
         buttonXLeft.setMaxSize(Double.MAX_VALUE, Double.MAX_VALUE);
         buttonXStop.setMaxSize(Double.MAX_VALUE, Double.MAX_VALUE);
+        
         Button buttonYInside = new Button ("y-inside");
         Button buttonYOutside = new Button ("y-outside");
         Button buttonYStop = new Button ("y-stop");
+        
         Button buttonZUp = new Button("z-up");
         Button buttonZDown = new Button("z-down");
         Button buttonZStop = new Button("z-stop");
+        
+        Button buttonLeftStationIn = new Button("l-in");
+        Button buttonLeftStationOut = new Button("l-out");
+        Button buttonLeftStationStop = new Button("l-stop");
+        
+        Button buttonRightStationIn = new Button("r-in");
+        Button buttonRightStationOut = new Button("r-out");
+        Button buttonRightStationStop = new Button("r-stop");
+        
         Button buttonLaunchProlog = new Button("Launch Prolog");
         Button buttonSuperbvisionUI = new Button("Launch SI-UI");
 
@@ -91,6 +103,38 @@ public class App extends Application {
             System.out.println("x stoped");
         });
         
+        
+        buttonLeftStationIn.setOnAction (event -> {
+            warehouse.moveLeftStationInside();
+            System.out.println("Left station moving inside");
+        });
+        
+        buttonLeftStationOut.setOnAction (event -> {
+            warehouse.moveLeftStationOutside();
+            System.out.println("Left station moving outside");
+        });
+        
+        buttonLeftStationStop.setOnAction (event -> {
+            warehouse.stopLeftStation();
+            System.out.println("Left station stoped");
+        });
+        
+        
+        buttonRightStationIn.setOnAction (event -> {
+            warehouse.moveRightStationInside();
+            System.out.println("Right station moving inside");
+        });
+        
+        buttonRightStationOut.setOnAction (event -> {
+            warehouse.moveRightStationOutside();
+            System.out.println("Right station moving outside");
+        });
+        
+        buttonRightStationStop.setOnAction (event -> {
+            warehouse.stopRightStation();
+            System.out.println("Right station stoped");
+        });
+        
         buttonLaunchProlog.setOnAction(event->{
             try {
                 String folder = System.getProperty("user.dir");
@@ -121,8 +165,15 @@ public class App extends Application {
         root.add(buttonZUp,1,3);
         root.add(buttonZDown,2,3);
         root.add(buttonZStop,3,3);
-        root.add(buttonLaunchProlog, 1, 4);
-        root.add(buttonSuperbvisionUI, 2, 4);
+        root.add(buttonLeftStationIn,1,4);
+        root.add(buttonLeftStationOut,2,4);
+        root.add(buttonLeftStationStop,3,4);
+        root.add(buttonRightStationIn,1,5);
+        root.add(buttonRightStationOut,2,5);
+        root.add(buttonRightStationStop,3,5);
+        
+        root.add(buttonLaunchProlog, 1, 6);
+        root.add(buttonSuperbvisionUI, 2, 6);
         root.setHgap(10);
         root.setVgap(10);
         Scene scene = new Scene (root, 300, 250);

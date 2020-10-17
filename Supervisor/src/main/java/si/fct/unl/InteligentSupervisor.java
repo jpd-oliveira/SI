@@ -98,9 +98,45 @@ public void startWebServer() {
             req.response().plain("OK");
             return req;
         });
+       
+        On.get("/l-move-inside").serve(req -> {
+            warehouse.moveLeftStationInside();
+            req.response().plain("OK");
+            return req;
+        });
+
+        On.get("/l-move-outside").serve(req -> {
+            warehouse.moveLeftStationOutside();
+            req.response().plain("OK");
+            return req;
+        });
+
+        On.get("/l-stop").serve(req -> {
+            warehouse.stopLeftStation();
+            req.response().plain("OK");
+            return req;
+        });
         
         
+        On.get("/r-move-inside").serve(req -> {
+            warehouse.moveRightStationInside();
+            req.response().plain("OK");
+            return req;
+        });
+
+        On.get("/r-move-outside").serve(req -> {
+            warehouse.moveRightStationOutside();
+            req.response().plain("OK");
+            return req;
+        });
+
+        On.get("/r-stop").serve(req -> {
+            warehouse.stopRightStation();
+            req.response().plain("OK");
+            return req;
+        });
         
+   
         On.get("/execute_remote_query").serve(req -> {            
             String the_query = URLEncoder.encode(req.param("query"), StandardCharsets.UTF_8);
             String result = HTTP.get("http://localhost:8083/execute_remote_query?query="+the_query).execute().result();            

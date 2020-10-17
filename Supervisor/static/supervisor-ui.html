@@ -54,7 +54,7 @@
                     ajax_get_request("/y-move-inside", {"cmd": "y-move-inside"});
                 });
                 $("#y-outside").click(function () {
-                    ajax_get_request("/y-move-outside", {"cmd": "x-move-outside"});
+                    ajax_get_request("/y-move-outside", {"cmd": "y-move-outside"});
                 });
                 $("#y-stop").click(function () {
                     ajax_get_request("/y-stop", {"cmd": "y-move-stop"});
@@ -68,6 +68,26 @@
                 });
                 $("#z-stop").click(function () {
                     ajax_get_request("/z-stop", {"cmd": "z-move-stop"});
+                });
+                
+                $("#l-inside").click(function () {
+                    ajax_get_request("/l-move-inside", {"cmd": "l-move-inside"});
+                });
+                $("#l-outside").click(function () {
+                    ajax_get_request("/l-move-outside", {"cmd": "l-move-outside"});
+                });
+                $("#l-stop").click(function () {
+                    ajax_get_request("/l-stop", {"cmd": "l-move-stop"});
+                });
+                
+                $("#r-inside").click(function () {
+                    ajax_get_request("/r-move-inside", {"cmd": "r-move-inside"});
+                });
+                $("#r-outside").click(function () {
+                    ajax_get_request("/r-move-outside", {"cmd": "r-move-outside"});
+                });
+                $("#r-stop").click(function () {
+                    ajax_get_request("/r-stop", {"cmd": "r-move-stop"});
                 });
 
             });
@@ -162,6 +182,16 @@
                                         <td><button id="z-up" type="button" class="btn btn-primary">z-Up</button></td>
                                         <td><button id="z-down" type="button" class="btn btn-success">z-Down</button></td>
                                         <td><button id="z-stop" type="button" class="btn btn-warning">z-Stop</button></td>
+                                    </tr>
+                                    <tr>     
+                                        <td><button id="l-inside" type="button" class="btn btn-primary">l-Inside</button></td>
+                                        <td><button id="l-outside" type="button" class="btn btn-success">l-Outside</button></td>
+                                        <td><button id="l-stop" type="button" class="btn btn-warning">l-Stop</button></td>
+                                    </tr>
+                                    <tr>                                             
+                                        <td><button id="r-inside" type="button" class="btn btn-primary">r-Inside</button></td>
+                                        <td><button id="r-outside" type="button" class="btn btn-success">r-Outside</button></td>
+                                        <td><button id="r-stop" type="button" class="btn btn-warning">r-Stop</button></td>
                                     </tr>
                                 </tbody>
                             </table>
