@@ -19,7 +19,7 @@
                     }
                 }).fail(function () {
 
-                    alert("error");
+                    console.log("AJAX error requesting: " + remote_address)
                 }).always(function () {
                     //alert("finished");
                 });
@@ -134,8 +134,27 @@
                 $('#prologTextAnswers').val(result.trim());
 
             }
+            
+            function done_read_sensor_values(result){
+                
+                console.log(result);
+                const obj = JSON.parse(result);
+                
+                $("#xLabel").text("X: " + obj.x);
+                $("#yLabel").text("Y: " + obj.x);
+                $("#zLabel").text("Z: " + obj.x);
+                
+                $("#xMovingLabel").text("xMov: " + obj.x);
+                $("#cageSensorLabel").text("Cg: " + obj.x);
+                
+            }
   
-
+            let timerId =setTimeout(
+                    function tick() {
+                        ajax_get_request("/read_sensor_values",{"cmd":"xpto"}, done_read_sensor_values);
+                        timerId = setTimeout(tick, 100);
+                    }
+            , 100);     
         </script>
         <style>
             iframe{
@@ -221,6 +240,23 @@
                             <div class="embed-responsive embed-responsive-16by9">
                                 <iframe src="http://localhost:8081/ss_multi_parts.html" title="Simulator"></iframe>
                             </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-1" style="font-size: 12px;">
+                            <label id="xLabel" style="font-size: 12px;"></label>
+                        </div>
+                        <div class="col-sm-1" style="font-size: 12px;">
+                            <label id="yLabel" style="font-size: 12px;"></label>
+                        </div>
+                        <div class="col-sm-1" style="font-size: 12px;">
+                            <label id="zLabel" style="font-size: 12px;"></label>
+                        </div>
+                        <div class="col-sm-1" style="font-size: 12px;">
+                            <label id="xMovingLabel" style="font-size: 12px;"></label>
+                        </div>
+                        <div class="col-sm-1" style="font-size: 12px;">
+                            <label id="cageSensorLabel" style="font-size: 12px;"></label>
                         </div>
                     </div>
                 </div>

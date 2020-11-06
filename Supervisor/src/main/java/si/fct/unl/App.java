@@ -6,32 +6,34 @@ import java.net.URISyntaxException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.application.Application;
+import javafx.application.Platform;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.GridPane;
 import javafx.stage.Stage;
+import javafx.stage.WindowEvent;
 
 
 /**
  * JavaFX App
  */
 public class App extends Application {
+    
+    Warehouse warehouse = new Warehouse();
+    final InteligentSupervisor supervisor  = new InteligentSupervisor(warehouse);
 
     @Override
     public void start(Stage primaryStage) {
-                    
-
-        
-        Warehouse warehouse = new Warehouse();
+                 
+ 
         new Thread() {
             public void run() {               
                 warehouse.initilizeHardwarePorts();
             }
         }.start();
-
-        final InteligentSupervisor supervisor  = new InteligentSupervisor(warehouse);
+        
         supervisor.startWebServer();
 
         
@@ -61,6 +63,7 @@ public class App extends Application {
         
         Button buttonLaunchProlog = new Button("Launch Prolog");
         Button buttonSuperbvisionUI = new Button("Launch SI-UI");
+        Button startSupervisorButton = new Button("Start Supervisor");
 
 
         
@@ -145,18 +148,27 @@ public class App extends Application {
             try {
                 String folder = System.getProperty("user.dir");
                 Runtime.getRuntime().exec("swipl-win.exe -f "+folder +"/kbase/supervisor.pl -g main");
+                buttonLaunchProlog.setDisable(true);
             } catch (IOException ex) {
                 Logger.getLogger(App.class.getName()).log(Level.SEVERE, null, ex);
             }                
         });
         
         buttonSuperbvisionUI.setOnAction(event->{
+            
+            buttonSuperbvisionUI.setDisable(true);
+            
             try {
-               
                 java.awt.Desktop.getDesktop().browse(new URI("http://localhost:8082/supervisor-ui.html"));
             } catch (IOException | URISyntaxException ex) {
                 Logger.getLogger(App.class.getName()).log(Level.SEVERE, null, ex);
             }                
+        });
+        
+        startSupervisorButton.setOnAction(event->{
+            
+            startSupervisorButton.setDisable(true);
+            supervisor.start();
         });
 
 
@@ -180,17 +192,24 @@ public class App extends Application {
         
         root.add(buttonLaunchProlog, 1, 6);
         root.add(buttonSuperbvisionUI, 2, 6);
+        root.add(startSupervisorButton, 3, 6);
         root.setHgap(10);
         root.setVgap(10);
         Scene scene = new Scene (root, 300, 250);
         primaryStage.setTitle("Hello World");
         primaryStage.setScene(scene);
-        primaryStage.show();
-        
-        
-        
-        
+        primaryStage.show();      
     }
-
-
+    
+    private void closeWindowEvent(WindowEvent event){
+    
+        System.out.println("Window close request ...");
+        supervisor.setInterrupted(true);
+        Platform.exit();
+        System.exit(0);
+    }
+    
+    public static void main(String[] arg){
+        launch();
+    }
 }

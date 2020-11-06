@@ -10,6 +10,10 @@
 :- http_handler(root(monitoring_req       ), monitoring_req          , []).
 :- http_handler(root(monitoring_req_xhr   ), monitoring_req_xhr      , []).
 :- http_handler(root(execute_remote_query ), execute_remote_query    , []).
+:- http_handler(root(query_dispatcher_json), query_dispatcher_json   , []).
+:- http_handler(root(query_forward), query_forward, []).
+
+:-include('dispatcher.pl').
 
 
 assert_variables([]).
@@ -90,31 +94,41 @@ monitoring_post_xhr(Request):-
         prolog_to_json(Events, JSON_EVENTS),
         json_write(current_output,JSON_EVENTS).
 
+query_forward(_Request):-
+        forward,
+        format('Content-type: text/plain~n~n'),
+        nl,writeln('ok'),
+        nl.
 
-execute_query([query=QueryString]):-
+query_dispatcher_json(_Request):-
+    findall( dispatch(Action),
+    (
+        action(Action)
+    ), ListOfActions),
+    retactall(action(_)),
+    format('Content-type: application/json~n~n', []),
+    prolog_to_json(ListOfActions, JSON_EVENTS),
+    json_write(current_output,JSON_EVENTS ).
+
+execute_query([query=QueryString],Result):-
     term_string(QueryTerm, QueryString),
-    %current_input(CurrentInput),
-    %current_output(CurrentOutput),
-    %set_prolog_IO(CurrentInput, CurrentOutput, CurrentOutput),
-    %with_output_to(current_error, QueryTerm).
-    assert_once(res_sult(no)),
-    QueryTerm,
-    assert_once(res_sult(true)).
+    catch(
+     findall(true, QueryTerm, L),
+	 error(Err,_Context)
+	 ,
+	 (   format('Erro: ~w\n', [Err]), L=[false])
+    ),
+    [Result|_]=L,
+    !.
+execute_query(_,false).
 
 %:-findall(Y, ( member(X,[1,2,3,4]), Y is X*2), L), write(L).
 execute_remote_query(Request):-
-        %debug(hello, 'About to say hello', []),
-        %tell('c:/temp/lixo.pl'),
-        %writeln(Request),
-        %Told,
         member(search(List), Request),
         format('Content-type: text/plain~n~n'),
-        %findall(event(A,B,C),  event(A,B,C), Events),
-        %portray_clause(List),
-        execute_query(List),
-        res_sult(Res),
-        nl,writeln(Res),
-        nl.
+        execute_query(List, Result),
+	nl,
+        writeln(Result).
 
 
 
