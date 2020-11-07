@@ -212,7 +212,7 @@ int getYPosition() {
 
 
 	int bb[3] = {2,3,4};
-	uInt8 p = readDigitalU8(0);
+	uInt8 p = readDigitalU8(1);
 	for (int i = 0; i < 3; i++) {
 		if (!getBitValue(p, bb[i]))
 			return i + 1;
