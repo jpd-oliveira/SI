@@ -396,11 +396,8 @@ bool isPartInCage() {
 
 
 	uInt8 p = readDigitalU8(2);
-	if (!getBitValue(p, 7))
+	if (getBitValue(p, 7))
 		return true;
 	return false;
-
-
-
 
 }
