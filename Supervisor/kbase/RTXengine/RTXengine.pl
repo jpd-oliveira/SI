@@ -41,7 +41,7 @@ defrule sequence_not_empty
        dynamize_conclusion(Goal),
        retract( sequence(ID,_, _)),
        assert(sequence(ID,Type,Sequence)),
-       %format('sequence_non_empty ~w type:~w  cond:~w goal:~w~n',[ID, Type, PreCond, Goal]),
+       % format('sequence_non_empty ~w type:~w  cond:~w goal:~w~n',[ID, Type, PreCond, Goal]),
        Goal
    ].
 

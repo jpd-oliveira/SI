@@ -34,30 +34,25 @@ adds(Action, Cond):-
     member(Cond, Alist).
 */
 
-find_action(State, CondList, Action, PrecondList, AddList, DelList):-
-    (   act Action pre PrecondList add AddList del DelList;
-        act Action pre PrecondList add AddList del DelList endcond _End
-    ),
+find_action(State, CondList, Action, PrecondList, AddList, DelList, End):-
+
+    act Action pre PrecondList add AddList del DelList endcond End,
+
     sublist(CondList, AddList),
     %fake_sub_set(AddList, State),
     evaluate_pre_condition(AddList, CondList),
     fake_sub_set(PrecondList, State),
     fake_sub_set(DelList, State).
 
-get_the_action(State, Action, PrecondList, AddList, DelList):-
-    (
-       act Action pre PrecondList add AddList del DelList
-       ;
-       act Action pre PrecondList add AddList del DelList endcond _END
-     ),
-
+get_the_action(State, Action, PrecondList, AddList, DelList, EndCond):-
+    act Action pre PrecondList add AddList del DelList endcond EndCond,
     fake_sub_set(PrecondList, State),
     fake_sub_set(DelList, State).
 
 
 sort_the_best_action(State, Cond, SortedActions):-
     findall( (Act, Score), (
-             find_action(State,Cond, Act, Prec, Add, Del),
+             find_action(State,Cond, Act, Prec, Add, Del, _EndCond),
              join_in_a_list(  Act, Prec, Add, Del, LLL),
              count_grounds(LLL, G,NG),
              Score is G / (G+NG)
@@ -129,7 +124,7 @@ strips1(Iteration, MaxIteration,  State, GoalList,Plan,  ForbbiddenActions, NewS
     sort_the_best_action(State, Goal, SortedActions),
     member( (Action, _Score), SortedActions),
 
-    get_the_action(State,  Action, PrecList, AddList, DelList),
+    get_the_action(State,  Action, PrecList, AddList, DelList, _ENDCOND),
     %act Action pre PrecList add AddList del DelList,
 
 
@@ -217,3 +212,91 @@ min_plan([Plan|AllPlans], CurrentBestPlan, BestPlan):-
     (   LenPlan<LenCurrBest ->
                   min_plan(AllPlans, Plan, BestPlan);
                   min_plan(AllPlans, CurrentBestPlan, BestPlan)).
+
+
+list_to_string_term([],'').
+list_to_string_term([Cond|List], StringTerm):-
+    list_to_string_term(List, StringTerm2),
+    term_string(Cond, SCond),
+    (   StringTerm2\=='',
+        atom_concat( SCond, ',' , ST3)
+        ;
+        StringTerm2=='',
+        ST3  = SCond
+    ),
+    atom_concat(ST3, StringTerm2, StringTerm).
+    %atom_concat( SCond, ',' , ST3),
+    %atom_concat(ST3, StringTerm2, StringTerm).
+
+
+
+list_to_term(List, Term):-
+    list_to_string_term(List, StringTerm),
+    %atom_concat(StringTerm,true, ST2), %because of extra comma
+    %term_string(Term, ST2).
+    (   StringTerm == '', %empty string
+        Term = true
+        ;
+        StringTerm \== '',
+        term_string(Term, StringTerm)
+    ).
+
+
+term_to_list(Term, List):-
+    findall(SubTerm, arg(_N, Term, SubTerm), List_aux),
+    delete(List_aux, true, List).
+
+
+
+prepare_the_plan(States, Plan, Sequence):-
+   get_end_conditions(States,Plan, EndConditions),
+   EndConditions2 = [true| EndConditions],
+   create_sequence(States,Plan, EndConditions2, Sequence),
+   !.
+
+
+get_end_conditions(_,[],[]).
+get_end_conditions(States, [Action|PlanList],[Condition|ConditionList]):-
+    %get_the_action(States,Action, _, _, _, ENDCOND),
+    act Action pre _PrecondList add _AddList del _DelList endcond EndCond,
+    list_to_term(EndCond,Condition),
+    get_end_conditions(States,PlanList,ConditionList).
+
+
+create_sequence(_,[],_,[]).
+
+create_sequence(States,[Action|ActionList],[ Condition|ConditionList],
+                [ (Condition, assert(Action)),(true,retract_states(DelList)), (true, assert_states(AddList))|Sequence]):-
+    get_the_action(States,Action, _Pre, AddList, DelList, _ENDCOND),
+    apply_rule(Action, AddList, DelList, States, States_2),
+    create_sequence(States_2, ActionList, ConditionList, Sequence).
+
+
+
+launch_sequence(Sequence, ID):-
+    new_id(ID),
+    assert(sequence(ID, plan_execution, Sequence)).
+
+
+is_system_state(Fact):-
+    % verifies if it is a sensor state
+    % COMPLETE THIS LIST WITH ALL YOUR SENSOR FACTS
+    member(Fact, [x_is_at(_), x_moving(_), y_is_at(_), cage ]).
+
+% retract just the facts that are not sensors
+retract_states([]).
+retract_states([Fact|List]):-
+    (  \+ is_system_state(Fact),  retract(Fact), !
+       ;
+       true
+    ),
+    retract_states(List).
+
+% assert just the facts that are not sensors
+assert_states([]).
+assert_states([Fact|List]):-
+    (  \+ is_system_state(Fact),  assert(Fact), write('Fact='), writeln(Fact),!
+       ;
+       true
+    ),
+    assert_states(List).

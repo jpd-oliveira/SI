@@ -26,8 +26,7 @@ public class App extends Application {
 
     @Override
     public void start(Stage primaryStage) {
-                 
- 
+
         new Thread() {
             public void run() {               
                 warehouse.initilizeHardwarePorts();
