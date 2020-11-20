@@ -55,8 +55,6 @@ public class InteligentSupervisor extends Thread {
                 JSONObject jsonObject = jsonArray.getJSONObject(i);
                 String action = jsonObject.getString("action_name");
                 executeAction(action);
-                
-        
             }           
         }
     }
@@ -67,11 +65,34 @@ public class InteligentSupervisor extends Thread {
         }else if(action.equalsIgnoreCase("move_x_left")){
             warehouse.moveXLeft();
         }else if(action.equalsIgnoreCase("stop_x")){
-            warehouse.stopX();
+            warehouse.stopX();  
+        }else if(action.equalsIgnoreCase("move_y_inside")){
+            warehouse.moveYInside();    
+        }else if(action.equalsIgnoreCase("move_y_outside")){
+            warehouse.moveYoutside();
+        }else if(action.equalsIgnoreCase("stop_y")){
+            warehouse.stopY();
+        }else if(action.equalsIgnoreCase("move_z_up")){
+            warehouse.moveZUp();
+        }else if(action.equalsIgnoreCase("move_z_down")){
+            warehouse.moveZDown();
+        }else if(action.equalsIgnoreCase("stop_z")){
+            warehouse.stopZ();
+        }else if(action.equalsIgnoreCase("move_left_station_inside")){
+            warehouse.moveLeftStationInside();
+        }else if(action.equalsIgnoreCase("move_left_station_outside")){
+            warehouse.moveLeftStationOutside();
+        }else if(action.equalsIgnoreCase("stop_left_station")){
+            warehouse.stopLeftStation();
+        }else if(action.equalsIgnoreCase("move_right_station_outside")){
+            warehouse.moveRightStationOutside();
+        }else if(action.equalsIgnoreCase("move_right_station_inside")){
+            warehouse.moveRightStationInside();
+        }else if(action.equalsIgnoreCase("stop_right_station")){
+            warehouse.stopRightStation();
         }else{
             System.out.printf("Dispatcher: Action %s means nothing to me. Go away!\n", action);
             return;
-        
         }
         System.out.println("Executed action: " + action);
     }
@@ -94,11 +115,50 @@ public class InteligentSupervisor extends Thread {
         }else{
             queryStates.append(",retract(y_is_at(_))");
         }
+        
+        position = warehouse.getZPosition();
+        if (position != -1){
+            queryStates.append(String.format(",assert_once(z_is_at(%d))", position));
+        }else{
+            queryStates.append(",retract(z_is_at(_))");
+        }
     
         queryStates.append(String.format(",assert_once(x_moving(%d))", warehouse.getXMoving()));
         queryStates.append(String.format(",assert_once(y_moving(%d))", warehouse.getYMoving()));
         //FINISH FOR THE REMAINING SENSORS
-        //...
+        queryStates.append(String.format(",assert_once(z_moving(%d))", warehouse.getZMoving()));
+        queryStates.append(String.format(",assert_once(left_station_moving(%d))", warehouse.getLeftStationMoving()));
+        queryStates.append(String.format(",assert_once(right_station_moving(%d))", warehouse.getRightStationMoving()));
+        
+        if(warehouse.isAtZUp()){
+            queryStates.append(",assert_once(is_at_z_up)");
+        }else{
+            queryStates.append(",retractall(is_at_z_up)");
+        }
+        
+        if(warehouse.isAtZDown()){
+            queryStates.append(",assert_once(is_at_z_down)");
+        }else{
+            queryStates.append(",retractall(is_at_z_down)");
+        }
+        
+        if(warehouse.isPartOnLeftStation()){
+            queryStates.append(",assert_once(is_part_left_station)");
+        }else{
+            queryStates.append(",retractall(is_part_left_station)");
+        }
+        if(warehouse.isPartOnRightStation()){
+            queryStates.append(",assert_once(is_part_right_station)");
+        }else{
+            queryStates.append(",retractall(is_part_right_station)");
+        }
+        if(warehouse.isPartInCage()){
+            queryStates.append(",assert_once(is_part_in_cage)");
+        }else{
+            queryStates.append(",retractall(is_part_in_cage)");
+        }
+        
+        
         //System.out.println("query" + queryStates.toString()); //use this to test if ok
         String encodedStates = URLEncoder.encode(queryStates.toString(), StandardCharsets.UTF_8);
         String result = this.executePrologQuery("execute_remote_query?query="+encodedStates);
@@ -109,14 +169,22 @@ public class InteligentSupervisor extends Thread {
         JSONObject  jsonObj = new JSONObject();
         jsonObj.put("x", warehouse.getXPosition());
         jsonObj.put("y", warehouse.getYPosition());
-        jsonObj.put("z", 0);
+        jsonObj.put("z", warehouse.getZPosition());
         jsonObj.put("x_moving", warehouse.getXMoving());
         jsonObj.put("y_moving", warehouse.getYMoving());
-        jsonObj.put("cage", warehouse.isPartInCage());
+        jsonObj.put("z_moving", warehouse.getZMoving());
+        jsonObj.put("is_part_in_cage", warehouse.isPartInCage());
         //Complete for the remaining sensors
         //...
-
+        jsonObj.put("left_station_moving", warehouse.getLeftStationMoving());
+        jsonObj.put("right_station_moving", warehouse.getRightStationMoving());
+        jsonObj.put("is_at_z_up", warehouse.isAtZUp());
+        jsonObj.put("is_at_z_down", warehouse.isAtZDown());
+        jsonObj.put("is_part_left_station", warehouse.isPartOnLeftStation());
+        jsonObj.put("is_part_right_station", warehouse.isPartOnRightStation());
+                
         return jsonObj;
+
     }
     
     public void run() {
