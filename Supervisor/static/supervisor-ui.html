@@ -10,16 +10,16 @@
         <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js" integrity="sha384-B4gt1jrGC7Jh4AgTPSdUtOBvfO8shuf57BaghqFfPlYxofvL8/KUEfYiJOMMV+rV" crossorigin="anonymous"></script>
 
         <script>
-            function ajax_get_request(remote_address, arguments, done_callback = null, fail_callback = null, always_callbak = null)
+            function ajax_get_request(remote_address, the_arguments, done_callback = null, fail_callback = null, always_callbak = null)
             {
-                $.get(remote_address, arguments, function (results) {
+                $.get(remote_address, the_arguments, function (results) {
                     if (done_callback !== null) {
+                        console.log("results"+ results);
                         done_callback(results);
                         //the_modal_dialog.style.display = "none";
                     }
                 }).fail(function () {
-
-                    console.log("AJAX error requesting: " + remote_address)
+                    console.log("AJAX error requesting: " + remote_address);
                 }).always(function () {
                     //alert("finished");
                 });
@@ -89,6 +89,31 @@
                 $("#r-stop").click(function () {
                     ajax_get_request("/r-stop", {"cmd": "r-move-stop"});
                 });
+                
+               $("#getInitialStatesButton").click(function() {
+                    ajax_get_request("/query_warehouse_states",null,function(result){
+                        console.log("Initial_state="+result.trim());
+                        $('#plannerInicialStateText').val(result.trim());
+                    });
+                });
+                
+                $("#generatePlanButton").click(function() {
+                    si = $("#plannerInicialStateText").val(); //inicial state
+                    sf = $("#plannerGoalsText").val(); //goals state
+                    ajax_get_request("/query_generate_plan",{"si":si,"sf":sf},function(result){
+                        console.log("generated_plan="+result.trim());
+                        $('#generatedPlanTextArea').val(result.trim());
+                    });
+                });
+                
+                $("#executePlanButton").click(function() {
+                    states = $("#plannerInicialStateText").val(); 
+                    plan   = $("#generatedPlanTextArea").val(); //goals state
+                    ajax_get_request("/query_execute_plan",{"plan":plan,"states":states},function(result){
+                        console.log("execute_plan="+result.trim());
+                        $('#logsText').val(result.trim());
+                    });
+                });
 
             });
 
@@ -104,15 +129,11 @@
             });
 
 
-            function process(e) {
-                var code = (e.keyCode ? e.keyCode : e.which);
-                if (code == 13) { //Enter keycode
+             function processEnter(e) {
+                if (event.which == 13) {
                     var current_line = getCurrentLine("prologTextArea");
+                    console.log("antes de processar= " +current_line);
                     ajax_get_request("/execute_remote_query", {"query": current_line}, done_executed_query);
-
-
-
-                    console.log("line=" + current_line);
                 }
             }
 
@@ -141,11 +162,16 @@
                 const obj = JSON.parse(result);
                 
                 $("#xLabel").text("X: " + obj.x);
-                $("#yLabel").text("Y: " + obj.x);
-                $("#zLabel").text("Z: " + obj.x);
-                
-                $("#xMovingLabel").text("xMov: " + obj.x);
-                $("#cageSensorLabel").text("Cg: " + obj.x);
+                $("#yLabel").text("Y: " + obj.y);
+                $("#zLabel").text("Z: " + obj.z);
+                $("#xMovingLabel").text("xMov: " + obj.x_moving);
+                $("#xMovingLabel").text("xMov: " + obj.y_moving);
+                $("#xMovingLabel").text("xMov: " + obj.z_moving);
+                $("#leftStationMovingLabel").text("left_sMov: " + obj.left_station_moving);
+                $("#rightStationMovingLabel").text("right_sMov: " + obj.right_station_moving);
+                $("#cageSensorLabel").text("Cg: " + 1*obj.is_part_in_cage);
+                $("#leftStationSensorLabel").text("LeftS: " + 1 * obj.is_part_left_station);
+                $("#rightStationSensorLabel").text("RightS: " + 1 * obj.is_part_right_station);
                 
             }
   
@@ -172,7 +198,7 @@
 
 
     </head>
-    <body>
+     <body>
         <div class="container-fluid">
             <div class="row">
                 <div class="col-sm-12">
@@ -188,61 +214,70 @@
                             <table class="table table-sm">                               
                                 <tbody>
                                     <tr>                                        
-                                        <td><button id="x-left"  type="button" class="btn btn-primary">x-Left</button></td>
-                                        <td><button id="x-right" type="button" class="btn btn-success">x-Right</button></td>
-                                        <td><button id="x-stop" type="button" class="btn btn-warning">x-Stop</button></td>
+                                        <td><button id="x-left"  type="button" class="btn btn-warning btn-sm btn-outline-primary py-0">x-left</button></td>
+                                        <td><button id="x-right" type="button" class="btn btn-warning btn-sm btn-outline-primary py-0">x-right</button></td>
+                                        <td><button id="x-stop" type="button" class="btn btn-warning btn-sm btn-outline-primary py-0">x-stop</button></td>
                                     </tr>
                                     <tr>                                        
-                                        <td><button id="y-inside"  type="button" class="btn btn-primary">y-Inside</button></td>
-                                        <td><button id="y-outside"  type="button" class="btn btn-success">y-Outside</button></td>
-                                        <td><button id="y-stop"  type="button" class="btn btn-warning">y-Stop</button></td>
+                                        <td><button id="y-inside" type="button" class="btn btn-warning btn-sm btn-outline-primary py-0">y-inside</button></td>
+                                        <td><button id="y-outside" type="button" class="btn btn-warning btn-sm btn-outline-primary py-0">y-outside</button></td>
+                                        <td><button id="y-stop" type="button" class="btn btn-warning btn-sm btn-outline-primary py-0">y-stop</button></td>
                                     </tr>
                                     <tr>                                        
-                                        <td><button id="z-up" type="button" class="btn btn-primary">z-Up</button></td>
-                                        <td><button id="z-down" type="button" class="btn btn-success">z-Down</button></td>
-                                        <td><button id="z-stop" type="button" class="btn btn-warning">z-Stop</button></td>
-                                    </tr>
-                                    <tr>     
-                                        <td><button id="l-inside" type="button" class="btn btn-primary">l-Inside</button></td>
-                                        <td><button id="l-outside" type="button" class="btn btn-success">l-Outside</button></td>
-                                        <td><button id="l-stop" type="button" class="btn btn-warning">l-Stop</button></td>
-                                    </tr>
-                                    <tr>                                             
-                                        <td><button id="r-inside" type="button" class="btn btn-primary">r-Inside</button></td>
-                                        <td><button id="r-outside" type="button" class="btn btn-success">r-Outside</button></td>
-                                        <td><button id="r-stop" type="button" class="btn btn-warning">r-Stop</button></td>
+                                        <td><button id="z-up" type="button" class="btn btn-warning btn-sm btn-outline-primary py-0">z-up</button></td>
+                                        <td><button id="z-down" type="button" class="btn btn-warning btn-sm btn-outline-primary py-0">z-down</button></td>
+                                        <td><button id="z-stop" type="button" class="btn btn-warning btn-sm btn-outline-primary py-0">z-stop</button></td>
                                     </tr>
                                 </tbody>
                             </table>
-
                         </div>
                     </div>
                     <div class="row">
+                        <div class="col-sm-12">                            
+                            <ul class="nav nav-tabs" role="tablist">
+                                <li><a data-toggle="tab" role="tab" href="#prologHome"  class="btn btn-sm btn-success">Prolog</a></li>
+                                <li><a data-toggle="tab" role="tab" href="#planner"   class="btn btn-sm btn-success">Planner</a></li>
+
+                            </ul>
+                        </div> 
+                    </div> 
+                    <div class="row">
                         <div class="col-sm-12">
-                            <div class="row">
-                                <div class="col-sm-12">
+
+                            <div class="tab-content">
+                                <div id="prologHome" class="tab-pane in active">
                                     <label for="prologTextArea">kb-Query</label>
-                                    <textarea class="form-control" id="prologTextArea" rows="6" onkeypress="process(event, this)"></textarea>
+                                    <textarea class="form-control" id="prologTextArea" rows="2" onkeypress="processEnter(event, this)"></textarea>
+                                    <label for="prologTextAnswers">Answers</label>
+                                    <textarea class="form-control" id="prologTextAnswers" rows="2"></textarea>
+                                </div>
+                                <div id="planner" class="tab-pane fade">                                    
+                                    <button id="getInitialStatesButton"  type="button" class="btn btn-primary btn-sm  py-0">Get initial States</button>
+                                    <textarea class="form-control" id="plannerInicialStateText" rows="2"></textarea>
+
+                                    <label for="plannerGoalsLabel">Goals</label>
+                                    <textarea class="form-control" id="plannerGoalsText" rows="2"></textarea>
+
+                                    <button id="generatePlanButton"  type="button" class="btn btn-primary btn-sm  py-0">Generate Plan</button>
+                                    <button id="executePlanButton"  type="button" class="btn btn-primary btn-sm  py-0">Execute</button>
+                                    <textarea class="form-control" id="generatedPlanTextArea" rows="2"></textarea>
+
+                                    <button id="clearLogsButton"  type="button" class="btn btn-primary btn-sm  py-0">Clear logs</button>
+                                    <textarea class="form-control" id="logsText" rows="2"></textarea>
                                 </div>
                             </div>    
-                            <div class="row">
-                                <div class="col-sm-12">
-                                    <label for="prologTextAnswers">Answers</label>
-                                    <textarea class="form-control" id="prologTextAnswers" rows="12"></textarea>
-                                </div>
-                            </div>
-                        </div>                    
-                    </div>
+                        </div>
+                    </div>                    
                 </div>
                 <div class="col-sm-8">
                     <div class="row">
-                        <div class="col-sm-12">
+                        <div class="col-sm-12">                            
                             <div class="embed-responsive embed-responsive-16by9">
                                 <iframe src="http://localhost:8081/ss_multi_parts.html" title="Simulator"></iframe>
-                            </div>
-                        </div>
+                            </div>                            
+                        </div>                        
                     </div>
-                    <div class="row">
+                    <div class="row">    
                         <div class="col-sm-1" style="font-size: 12px;">
                             <label id="xLabel" style="font-size: 12px;"></label>
                         </div>
@@ -250,17 +285,35 @@
                             <label id="yLabel" style="font-size: 12px;"></label>
                         </div>
                         <div class="col-sm-1" style="font-size: 12px;">
-                            <label id="zLabel" style="font-size: 12px;"></label>
+                            <label id="zLabel"></label>
                         </div>
                         <div class="col-sm-1" style="font-size: 12px;">
-                            <label id="xMovingLabel" style="font-size: 12px;"></label>
+                            <label id="xMovingLabel"></label>
                         </div>
                         <div class="col-sm-1" style="font-size: 12px;">
-                            <label id="cageSensorLabel" style="font-size: 12px;"></label>
+                            <label id="yMovingLabel"></label>
+                        </div>
+                        <div class="col-sm-1" style="font-size: 12px;">
+                            <label id="zMovingLabel"></label>
+                        </div>
+                        <div class="col-sm-1" style="font-size: 12px;">
+                            <label id="leftStationMovingLabel"></label>
+                        </div>
+                        <div class="col-sm-1" style="font-size: 12px;">
+                            <label id="rightStationMovingLabel"></label>
+                        </div>
+                        <div class="col-sm-1" style="font-size: 12px;">
+                            <label id="cageSensorLabel"></label>
+                        </div>  
+                        <div class="col-sm-1" style="font-size: 12px;">
+                            <label id="leftStationSensorLabel"></label>
+                        </div> 
+                        <div class="col-sm-1" style="font-size: 12px;">
+                            <label id="rightStationSensorLabel"></label>
                         </div>
                     </div>
                 </div>
             </div>
-
+        </div>
     </body>
 </html>
