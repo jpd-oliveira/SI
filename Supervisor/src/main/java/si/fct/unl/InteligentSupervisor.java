@@ -129,34 +129,12 @@ public class InteligentSupervisor extends Thread {
         queryStates.append(String.format(",assert_once(z_moving(%d))", warehouse.getZMoving()));
         queryStates.append(String.format(",assert_once(left_station_moving(%d))", warehouse.getLeftStationMoving()));
         queryStates.append(String.format(",assert_once(right_station_moving(%d))", warehouse.getRightStationMoving()));
-        
-        if(warehouse.isAtZUp()){
-            queryStates.append(",assert_once(is_at_z_up)");
-        }else{
-            queryStates.append(",retractall(is_at_z_up)");
-        }
-        
-        if(warehouse.isAtZDown()){
-            queryStates.append(",assert_once(is_at_z_down)");
-        }else{
-            queryStates.append(",retractall(is_at_z_down)");
-        }
-        
-        if(warehouse.isPartOnLeftStation()){
-            queryStates.append(",assert_once(is_part_left_station)");
-        }else{
-            queryStates.append(",retractall(is_part_left_station)");
-        }
-        if(warehouse.isPartOnRightStation()){
-            queryStates.append(",assert_once(is_part_right_station)");
-        }else{
-            queryStates.append(",retractall(is_part_right_station)");
-        }
-        if(warehouse.isPartInCage()){
-            queryStates.append(",assert_once(is_part_in_cage)");
-        }else{
-            queryStates.append(",retractall(is_part_in_cage)");
-        }
+        queryStates.append(String.format(",assert_once(is_at_z_up(%b))",warehouse.isAtZUp()));
+        queryStates.append(String.format(",assert_once(is_at_z_down(%b))",warehouse.isAtZDown()));
+        queryStates.append(String.format(",assert_once(is_part_left_station(%b))",warehouse.isPartOnLeftStation()));
+        queryStates.append(String.format(",assert_once(is_part_right_station(%b))",warehouse.isPartOnRightStation()));
+        queryStates.append(String.format(",assert_once(is_part_in_cage(%b))",warehouse.isPartInCage()));
+
         
         
         //System.out.println("query" + queryStates.toString()); //use this to test if ok
