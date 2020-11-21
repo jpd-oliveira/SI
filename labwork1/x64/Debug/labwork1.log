@@ -1,7 +1,7 @@
 ﻿  warehouse.c
-C:\SI\labwork1\warehouse.c(321): warning C4715: 'getLeftStationMoving': not all control paths return a value
 C:\SI\labwork1\warehouse.c(103): warning C4715: 'getXMoving': not all control paths return a value
 C:\SI\labwork1\warehouse.c(182): warning C4715: 'getZMoving': not all control paths return a value
 C:\SI\labwork1\warehouse.c(268): warning C4715: 'getYMoving': not all control paths return a value
+C:\SI\labwork1\warehouse.c(321): warning C4715: 'getLeftStationMoving': not all control paths return a value
 C:\SI\labwork1\warehouse.c(381): warning C4715: 'getRightStationMoving': not all control paths return a value
-LINK : fatal error LNK1168: cannot open C:\SI\labwork1\x64\Debug\labwork1.dll for writing
+  labwork1.vcxproj -> C:\SI\labwork1\x64\Debug\labwork1.dll
