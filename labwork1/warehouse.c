@@ -306,7 +306,7 @@ void stopLeftStation() {
 int getLeftStationMoving() {
 
 	uInt8 p4 = readDigitalU8(4);
-	uInt8 p5 = readDigitalU8(4);
+	uInt8 p5 = readDigitalU8(5);
 
 	if (getBitValue(p4, 7) == 1) {
 		return 1;
@@ -366,7 +366,7 @@ stopRightStation() {
 
 int getRightStationMoving() {
 
-	uInt8 p = readDigitalU8(4);
+	uInt8 p = readDigitalU8(5);
 
 	if (getBitValue(p, 1) == 1) {
 		return 1;
