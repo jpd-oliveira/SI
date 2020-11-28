@@ -90,31 +90,6 @@
                     ajax_get_request("/r-stop", {"cmd": "r-move-stop"});
                 });
                 
-               $("#getInitialStatesButton").click(function() {
-                    ajax_get_request("/query_warehouse_states",null,function(result){
-                        console.log("Initial_state="+result.trim());
-                        $('#plannerInicialStateText').val(result.trim());
-                    });
-                });
-                
-                $("#generatePlanButton").click(function() {
-                    si = $("#plannerInicialStateText").val(); //inicial state
-                    sf = $("#plannerGoalsText").val(); //goals state
-                    ajax_get_request("/query_generate_plan",{"si":si,"sf":sf},function(result){
-                        console.log("generated_plan="+result.trim());
-                        $('#generatedPlanTextArea').val(result.trim());
-                    });
-                });
-                
-                $("#executePlanButton").click(function() {
-                    states = $("#plannerInicialStateText").val(); 
-                    plan   = $("#generatedPlanTextArea").val(); //goals state
-                    ajax_get_request("/query_execute_plan",{"plan":plan,"states":states},function(result){
-                        console.log("execute_plan="+result.trim());
-                        $('#logsText').val(result.trim());
-                    });
-                });
-
             });
 
 
@@ -165,8 +140,8 @@
                 $("#yLabel").text("Y: " + obj.y);
                 $("#zLabel").text("Z: " + obj.z);
                 $("#xMovingLabel").text("xMov: " + obj.x_moving);
-                $("#xMovingLabel").text("xMov: " + obj.y_moving);
-                $("#xMovingLabel").text("xMov: " + obj.z_moving);
+                $("#yMovingLabel").text("yMov: " + obj.y_moving);
+                $("#zMovingLabel").text("zMov: " + obj.z_moving);
                 $("#leftStationMovingLabel").text("left_sMov: " + obj.left_station_moving);
                 $("#rightStationMovingLabel").text("right_sMov: " + obj.right_station_moving);
                 $("#cageSensorLabel").text("Cg: " + 1*obj.is_part_in_cage);
