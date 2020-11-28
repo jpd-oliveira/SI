@@ -111,24 +111,24 @@ int getZPosition() {
 	uInt8 p2 = readDigitalU8(2);
 	uInt8 p1 = readDigitalU8(1);
 
-	if (!getBitValue(p2, 6) || !getBitValue(p2, 5)) {
+	if (!getBitValue(p2, 6)){
 
 		return 1;
 	}
-	if (!getBitValue(p2, 4) || !getBitValue(p2, 3)) {
+	if (!getBitValue(p2, 4)){
 
 		return 2;
 	}
-	if (!getBitValue(p2, 2) || !getBitValue(p2, 1)) {
+	if (!getBitValue(p2, 2)){
 
 		return 3;
 	}
 
-	if (!getBitValue(p2, 0) || !getBitValue(p1, 7)) {
+	if (!getBitValue(p2, 0)){
 
 		return 4;
 	}
-	if (!getBitValue(p2, 6) || !getBitValue(p1, 5)) {
+	if (!getBitValue(p1, 6)){
 
 		return 5;
 	}
