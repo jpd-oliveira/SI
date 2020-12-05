@@ -129,11 +129,11 @@ public class InteligentSupervisor extends Thread {
         queryStates.append(String.format(",assert_once(z_moving(%d))", warehouse.getZMoving()));
         queryStates.append(String.format(",assert_once(left_station_moving(%d))", warehouse.getLeftStationMoving()));
         queryStates.append(String.format(",assert_once(right_station_moving(%d))", warehouse.getRightStationMoving()));
-        queryStates.append(String.format(",assert_once(is_at_z_up(%b))",warehouse.isAtZUp()));
-        queryStates.append(String.format(",assert_once(is_at_z_down(%b))",warehouse.isAtZDown()));
-        queryStates.append(String.format(",assert_once(is_part_left_station(%b))",warehouse.isPartOnLeftStation()));
-        queryStates.append(String.format(",assert_once(is_part_right_station(%b))",warehouse.isPartOnRightStation()));
-        queryStates.append(String.format(",assert_once(is_part_in_cage(%b))",warehouse.isPartInCage()));
+        queryStates.append(String.format(",assert_once(is_at_z_up)",warehouse.isAtZUp()));
+        queryStates.append(String.format(",assert_once(is_at_z_down)",warehouse.isAtZDown()));
+        queryStates.append(String.format(",assert_once(is_part_left_station)",warehouse.isPartOnLeftStation()));
+        queryStates.append(String.format(",assert_once(is_part_right_station)",warehouse.isPartOnRightStation()));
+        queryStates.append(String.format(",assert_once(is_part_in_cage)",warehouse.isPartInCage()));
 
         
         
